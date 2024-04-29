@@ -1,24 +1,28 @@
 {{#extends "base"}}
 {{#block "content"}}
+<style>
+    h1{
+        color: #333;
+        font-size:26px;
+        margin-bottom:20px;
+        padding: 0;
+        margin-top: 20px;
+        text-decoration:underline;
+    }
+    .table-header {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+</style>
 
-<h1>All products...</h1>
-<table class=""table>
-    <thead>
-        <th>
-            Product ID
-        </th>
-        <th>
-           Name
-        </th>
-        <th>
-          Cost
-        </th>
-        <th>
-           Description
-        </th>
-        <th>   
-             Location   
-        </th>
+<h1>ALL PRODUCTS</h1>
+<table class="table">
+    <thead class="table-header">
+        <th>Product ID</th>
+        <th>Name</th>
+        <th>Cost</th>
+        <th>Description</th>
+        <th>Location</th>
     </thead>
     {{#each products}}
     <tr>
