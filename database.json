@@ -1,0 +1,9 @@
+{
+    "dev": {
+      "driver": "mysql",
+      "user": "blooming",
+      "password":"plants1303",
+      "database":"plants",
+      "host":"127.0.0.1"
+    }
+  }
