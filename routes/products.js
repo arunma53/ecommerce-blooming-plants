@@ -4,6 +4,8 @@ const router = express.Router(); // #1 - Create a new express Router
 //require in the model
 const { Product } = require('../models');
 const {createProductForm , bootstrapField} = require('../forms');
+const { object } = require("forms/lib/fields");
+const { route } = require("express/lib/application");
 
 
 /// a router object can contain routes
@@ -16,13 +18,13 @@ router.get('/', async function(req,res){
    });
 });
 
- router.get('/add-product',function(req,res){
+ router.get('/add-products',function(req,res){
     const productForm = createProductForm();
     res.render('products/create',{
       form:productForm.toHTML(bootstrapField)
     })
  });
- router.post('/add-product', function(req,res){
+ router.post('/add-products', function(req,res){
    // create the product form object using caolan forms
    const productForm = createProductForm();
    //using the form object to handle the request
@@ -63,7 +65,7 @@ router.get('/', async function(req,res){
    })
  })
 
- router.get('/update-product/productId', async function(req,res){
+ router.get('/update-product/:productId', async function(req,res){
    const productId = req.params.productId;
 
    //fetch the product that we want to update
@@ -90,5 +92,65 @@ router.get('/', async function(req,res){
 
  })
  
+ router.post('/update-product/:productId',async function(req,res){
+   //1.create the form object
+   const productForm = createProductForm();
+
+   //use the form object to handle the request
+   productForm.handle(req,{
+      'success': async function(form){
+          //find the product that the user want to modify
+          const product = await Product.where({
+            'id':req.params.productId
+          }).fetch({
+            require:true // make sure the product actually exixts
+          });
+
+          //product.set('name',form.data.name)
+          //product.set('cost',form.data.cost)
+          //product.set('description',form.data.description)
+          //product.set('location',form.data.location)
+          product.set(form.data);
+          await product.save();
+          res.redirect('/products/')
+      },
+      'empty':function(form){
+          res.render('products/update',{
+            form:form.toHTML(bootstrapField)
+          })
+      },
+      'error':function(form){
+         res.render('products/update',{
+            form:form.toHTML(bootstrapField)
+          })
+      }
+   })
+ })
+ router.get('/delete-product/:productId',async function(req,res){
+   const product = await Product.where({
+      'id': req.params.productId
+   }).fetch({
+      required:true
+   });
+   res.render('products/delete',{
+      product:product.toJSON()
+   })
+ })
+
+ router.post('/delete-product/:productId',async function(req,res){
+   //get the product we want to delete
+   const product = await Product.where({
+      'id': req.params.productId
+   }).fetch({
+      required:true
+   });
+
+   await product.destroy();
+   res.redirect('/products');
+
+
+ })
+
+
 //exports
 module.exports = router; 
