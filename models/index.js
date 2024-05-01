@@ -17,7 +17,21 @@ const bookshelf = require('../bookshelf');
 //second argument is a configure obj
 
 const Product = bookshelf.model('Product',{
-   tableName:'products'
+   tableName:'products',
+   //relationship in Bookmodel are represented as functions
+   // the name of the fk column should be the table name with _id at the back, singular
+   //the name of fk should be Model name of the other party but in small and singular
+   category:function(){
+     return this.belongsTo('Category');//one product model instance belongs to one category
+   }
 })
 
-module.exports = {Product}
+const Category = bookshelf.model('Category',{
+   tableName:'categories',
+   // the name of the relationship is plural form of the model name
+   products:function(){
+      return this.hasMany('Product');
+   }
+})
+
+module.exports = { Product , Category }

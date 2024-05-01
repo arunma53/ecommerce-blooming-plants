@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router(); // #1 - Create a new express Router
 
 //require in the model
-const { Product } = require('../models');
+const { Product, Category } = require('../models');
 const {createProductForm , bootstrapField} = require('../forms');
 const { object } = require("forms/lib/fields");
 const { route } = require("express/lib/application");
@@ -11,15 +11,22 @@ const { route } = require("express/lib/application");
 /// a router object can contain routes
 router.get('/', async function(req,res){
    // use the product model to get all products
-   const products = await Product.collection().fetch();
+   const products = await Product.collection().fetch({
+      withRelated:['category']
+   });
    //products.tojSON() convert the table rows  into JSON format
    res.render('products/index',{
     products:products.toJSON()
    });
 });
 
- router.get('/add-products',function(req,res){
-    const productForm = createProductForm();
+ router.get('/add-products', async function(req,res){
+   //get all the categories
+   
+   const allCategories = await Category.fetchAll().map(category =>[ category.get('id'),category.get('name')]);
+  
+
+    const productForm = createProductForm(allCategories);
     res.render('products/create',{
       form:productForm.toHTML(bootstrapField)
     })
@@ -42,6 +49,7 @@ router.get('/', async function(req,res){
            product.set('cost',form.data.cost)
            product.set('description',form.data.description)
            product.set('location',form.data.location)
+           product.set('category_id',form.data.category_id)
 
            // save the prodcut to te databse
            await product.save();

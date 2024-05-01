@@ -1,9 +1,11 @@
 //import in caolan forms
-const forms = require('forms')
+const forms = require('forms');
+//const { widgets } = require('forms/lib/forms');
 
 //create some shortcuts
 const fields = forms.fields;
 const validators = forms.validators;
+const widgets = forms.widgets;
 
 const bootstrapField = function (name, object) {
     if (!Array.isArray(object.widget.classes)) { object.widget.classes = []; }
@@ -29,7 +31,7 @@ const bootstrapField = function (name, object) {
 
 //create a function that will
 //create a forms object
-const createProductForm = () => {
+const createProductForm = (categories) => {
     //the object in the parameter
     //is the form definition
     return forms.create({
@@ -50,6 +52,13 @@ const createProductForm = () => {
         'location':fields.string({
             required:true,
             errorAfterField:true
+        }),
+        'category_id':fields.string({
+            label:'Category',
+            required:true,
+            errorAfterField:true,
+            widget:widgets.select(),// use the checkbox
+            choices: categories
         })
 
     })
