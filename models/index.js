@@ -26,7 +26,11 @@ const Product = bookshelf.model('Product',{
    }
 })
 
+
+//and model name keep to singural form of the table name
+//but the first alphabet case is uppercase
 const Category = bookshelf.model('Category',{
+   //table name should always be plural
    tableName:'categories',
    // the name of the relationship is plural form of the model name
    products:function(){
