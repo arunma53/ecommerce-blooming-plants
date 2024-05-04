@@ -135,7 +135,9 @@ router.get('/', async function(req,res){
           const product = await Product.where({
             'id':req.params.productId
           }).fetch({
+            withRelated:['tags'],
             require:true // make sure the product actually exixts
+
           });
 
           //product.set('name',form.data.name)
@@ -145,6 +147,19 @@ router.get('/', async function(req,res){
           const {tags, ...productData} = form.data;
           product.set(productData);
           await product.save();
+
+          //update the relationships
+          //1.coert the tags from  string to array
+            const tagIds = tags.split(',');
+
+            //2. remove alll the tags
+            // ..get an array of the ids of the tags related tothe product
+            const existingTagIds = await product.related('tags').pluck('id')
+            await product.tags().detach(existingTagIds);//detach is to remove a M:N relationship
+
+            await product.tags().attach(tagIds);
+
+
           res.redirect('/products/')
       },
       'empty':function(form){
