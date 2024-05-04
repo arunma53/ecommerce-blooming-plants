@@ -73,5 +73,63 @@ const createProductForm = (categories,tags) => {
     })
 }
 
+const createRegistrationForm = () => {
+    return forms.create({
+        'username': fields.string({
+            required: true,
+            errorAfterField: true,
+
+            cssClasses: {
+                label: ['form-label']
+            }
+        }),
+        'email': fields.email({
+            widget:widgets.email(),
+            required: true,
+            errorAfterField: true,
+            validators:[validators.email()],
+            cssClasses: {
+                label: ['form-label']
+            }
+        }),
+        'password': fields.password({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            }
+        }),
+        'confirm_password': fields.password({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            validators: [validators.matchField('password'),validators.minlength(8),]
+        })
+    })
+}
+
+const createLoginForm = () => {
+    return forms.create({
+        
+        'email': fields.email({
+            widget:widgets.email(),
+            required: true,
+            errorAfterField: true,
+            validators:[validators.email()],
+            //cssClasses: {
+                //label: ['form-label']
+            //}
+        }),
+        'password': fields.password({
+            required: true,
+            errorAfterField: true,
+            //cssClasses: {label: ['form-label']}
+        })
+    })
+}
+
+
 //exports
-module.exports = {createProductForm,bootstrapField};
+module.exports = {createProductForm,createRegistrationForm,createLoginForm,bootstrapField};

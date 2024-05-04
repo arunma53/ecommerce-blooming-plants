@@ -51,12 +51,15 @@ app.use(function(req,res, next){
 async function main() {
     // routes will be inside here
     const landingRoutes = require('./routes/landing');
-    const productRoutes = require('./routes/products')
+    const productRoutes = require('./routes/products');
+    const userRoutes = require('./routes/users');
 
 
     // use the landing routes
     app.use('/', landingRoutes);
-    app.use('/products', productRoutes)
+    app.use('/products', productRoutes);
+    app.use('/users', userRoutes);
+
 
   
 }

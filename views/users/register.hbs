@@ -1,0 +1,53 @@
+{{#extends 'base'}}
+{{#block 'styles'}}
+    <style>
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+{{/block}}
+{{#block 'content'}}
+<div class="container">
+<h1>Register</h1>
+<form method="POST">
+    {{{userForm}}}
+    <input type="submit" value="Register" class="btn btn-primary mt-3"/>
+    {{/block}}
+</form>
+</div>
+{{/extends}}
+
+ 
