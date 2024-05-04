@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router(); // #1 - Create a new express Router
 
 //require in the model
-const { Product, Category } = require('../models');
+const { Product, Category,Tag } = require('../models');
 const {createProductForm , bootstrapField} = require('../forms');
 const { object } = require("forms/lib/fields");
 const { route } = require("express/lib/application");
@@ -12,7 +12,7 @@ const { route } = require("express/lib/application");
 router.get('/', async function(req,res){
    // use the product model to get all products
    const products = await Product.collection().fetch({
-      withRelated:['category']
+      withRelated:['category','tags']
    });
    //products.tojSON() convert the table rows  into JSON format
    res.render('products/index',{
@@ -24,9 +24,12 @@ router.get('/', async function(req,res){
    //get all the categories
    
    const allCategories = await Category.fetchAll().map(category =>[ category.get('id'),category.get('name')]);
-  
+   
+   //get all the tags
+   const allTags = await Tag.fetchAll().map( tag => [tag.get('id'), tag.get('name')]);
 
-    const productForm = createProductForm(allCategories);
+
+    const productForm = createProductForm(allCategories,allTags);
     res.render('products/create',{
       form:productForm.toHTML(bootstrapField)
     })
@@ -54,6 +57,13 @@ router.get('/', async function(req,res){
            // save the prodcut to te databse
            await product.save();
 
+           //save the tags relationship
+           if(form.data.tags){
+            //form.data.tags will be a string of the selected tag ids  separated BY COMMAas
+            //eg;"1,2"
+            await product.tags().attach(form.data.tags.split(','));
+           }
+
            //same as
            res.redirect("/products/");
 
@@ -80,17 +90,31 @@ router.get('/', async function(req,res){
    const product = await Product.where({
       'id':productId
    }).fetch({
-      require:true
+      require:true,
+      withRelated:['tags'] //when fetching the products, also  getch the tag info
    });
+   //get all the categories
+   
+   const allCategories = await Category.fetchAll().map(category =>[ category.get('id'),category.get('name')]);
+   
+   //get all the tags
+   const allTags = await Tag.fetchAll().map( tag => [tag.get('id'), tag.get('name')]);
+
 
    //create the product form
-   const productForm = createProductForm();
+   const productForm = createProductForm(allCategories,allTags);
 
 //prefill the forms with values from the product
    productForm.fields.name.value = product.get('name');
    productForm.fields.cost.value = product.get('cost');
    productForm.fields.description.value = product.get('description');
    productForm.fields.location.value = product.get('location');
+   productForm.fields.category_id.value = product.get('category_id');
+
+   //get the ids of all the tags that the product is related to 
+   const selectedTags = await product.related('tags').pluck('id');
+   productForm.fields.tags.value = selectedTags;
+
 
    res.render('products/update',{
       'form': productForm.toHTML(bootstrapField),
@@ -118,7 +142,8 @@ router.get('/', async function(req,res){
           //product.set('cost',form.data.cost)
           //product.set('description',form.data.description)
           //product.set('location',form.data.location)
-          product.set(form.data);
+          const {tags, ...productData} = form.data;
+          product.set(productData);
           await product.save();
           res.redirect('/products/')
       },

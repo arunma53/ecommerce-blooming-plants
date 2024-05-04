@@ -24,6 +24,7 @@
         <th>Description</th>
         <th>Location</th>
         <th>Category Id</th>
+        <th>Tags</th>
         <th></th>
     </thead>
     {{#each products}}
@@ -44,7 +45,14 @@
             {{this.location}}
         </td>
         <td>
+           
             {{this.category.name}}
+        </td>
+        <td>
+             {{#each this.tags}}
+             <span class="badge rounded-pill bg-success">{{this.name}}</span>
+           
+            {{/each}}
         </td>
         <td>
             <a href = "/products/update-product/{{this.id}}"
