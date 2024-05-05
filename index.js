@@ -27,6 +27,7 @@ app.use(
 );
 
 // enable sessions
+//req.session is only available after you enable sessions
 app.use(session({
     store: new FileStore(), // store session data in files
     secret: 'thadathil',
@@ -45,6 +46,12 @@ app.use(function(req,res, next){
     
     // extract out error flash messages
     res.locals.error_messages = req.flash('error_messages');
+    next();
+})
+
+//share the current logged in user with all hbs file
+app.use(function(req,res,next){
+    res.locals.user = req.session.user;
     next();
 })
 

@@ -112,19 +112,18 @@ const createRegistrationForm = () => {
 
 const createLoginForm = () => {
     return forms.create({
-        
-        'email': fields.email({
+        'email':fields.string({
             widget:widgets.email(),
-            required: true,
-            errorAfterField: true,
-            validators:[validators.email()],
-            //cssClasses: {
-                //label: ['form-label']
-            //}
+            required:true,
+            errorAfterField:true,
+            validators:[validators.email()]
         }),
+        
+        
+       
         'password': fields.password({
             required: true,
-            errorAfterField: true,
+            errorAfterField: true
             //cssClasses: {label: ['form-label']}
         })
     })
