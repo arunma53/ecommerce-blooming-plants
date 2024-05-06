@@ -6,8 +6,12 @@
 <p>Please login with your account below!</p>
 
 <form method="POST">
-{{{LoginForm}}}
+{{{loginForm}}}
 <input type="submit" class="btn btn-primary" value="Login"/>
+
+
+{{!-- CSRF TOKEN--}}
+<input type="hidden" name="_csrf" value="{{csrfToken}}"/>
 </form>
 
 

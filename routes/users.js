@@ -14,6 +14,7 @@ const getHashedPassword = function (plainPassword) {
 
 
 router.get('/register', function (req, res) {
+    console.log("IN")
     const userForm = createRegistrationForm();
     res.render('users/register', {
         userForm: userForm.toHTML(bootstrapField)
@@ -21,14 +22,17 @@ router.get('/register', function (req, res) {
 })
 
 router.post('/register', (req, res) => {
+    console.log("form post")
     const userForm = createRegistrationForm();
     userForm.handle(req, {
         success: async (form) => {
+            console.log("Form success")
             const user = new User({
                 'username': form.data.username,
                 'password': getHashedPassword(form.data.password),
                 'email': form.data.email
             });
+            console.log(user);
             await user.save();
             req.flash("success_messages", "Your account has been signed up successfully!");
             res.redirect('/users/login');

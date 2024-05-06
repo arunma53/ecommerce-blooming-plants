@@ -6,8 +6,11 @@ require('dotenv').config();
 const session = require('express-session');
 const flash = require('connect-flash');
 const FileStore = require('session-file-store')(session);
+const csurf = require('csurf');
 
 const app = express();
+
+const csurfInstance = csurf();
 
 // use hbs for the view engine
 app.set('view engine', 'hbs');
@@ -39,21 +42,55 @@ app.use(session({
 app.use(flash());  // enable flash messages
 
 // must do this after sessions are enabled because flash messages rely on sessions
-app.use(function(req,res, next){
+app.use(function (req, res, next) {
     // req.flash() without a second parameter
     // return the current flash message and delete it
     res.locals.success_messages = req.flash('success_messages');
-    
+
     // extract out error flash messages
     res.locals.error_messages = req.flash('error_messages');
     next();
 })
 
 //share the current logged in user with all hbs file
-app.use(function(req,res,next){
+app.use(function (req, res, next) {
     res.locals.user = req.session.user;
     next();
 })
+
+//enable csurf for CSRF protection after sessions are enabled
+//because csurf requires sessions to work
+app.use(csurf());
+// app.use(function(req,res,next){
+// // if statment to bypass csurf
+//     if(req.url.slice(0,5) === "/api/")
+//     {
+//         return next();
+//     }
+//     csurfInstance(req,res,next);
+// })
+
+//middleware to share the csurf token with all hbs files
+app.use(function (req, res, next) {
+    //req.csrfToken(); is available because of `app.use(csrf)`
+    res.locals.csrfToken = req.csrfToken();
+    next();
+})
+
+//middleware to handle csrf errors
+app.use(function(err,req,res,next){
+    //if the middleware function had four parameters
+   // the it is an error handler for the middleware
+    //directly before it
+    if(err && err.code == "EBADCSRFTOKEN") {
+        req. flash("error_messages"," The form has expired , please try again ");
+        res.redirect('back'); // go back one page
+    } else{
+        next();
+    }
+    
+})
+
 
 async function main() {
     // routes will be inside here
@@ -68,11 +105,11 @@ async function main() {
     app.use('/users', userRoutes);
 
 
-  
+
 }
 
 main();
 
-app.listen(3000, ()=>{
+app.listen(3000, () => {
     console.log("server has started");
 })
