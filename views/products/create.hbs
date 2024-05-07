@@ -4,7 +4,7 @@
 <form method="POST">
     {{{form}}}
     <div>
-        <a href="#" class="btn btn-primary mt-3">Upload Image</a>
+        <a href="#" class="btn btn-primary mt-3" id="upload_widget">Upload Image</a>
         <img src="" style="display:none" id="uploaded_image" />
     </div>
     <input type="submit" class="btn btn-primary mt-3" value="Add product" />
@@ -35,10 +35,19 @@
     //}
     //create the upload widget
     const widget = cloudinary.createUploadWidget({
-
+      
+    cloudName: '{{cloudinaryName}}',
+    apiKey: '{{cloudinaryApiKey}}',
+    uploadPreset: '{{cloudinaryPreset}}',
+    uploadSignature: generateSignature
     }, function(err,result){
-        
+        console.log(result);
     })
+
+    document.querySelector('#upload_widget')
+     .addEventListener("click",function(){
+        widget.open();
+     })
 
 </script>
 
