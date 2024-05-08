@@ -37,9 +37,18 @@ router.get('/', async function(req,res){
       cloudinaryPreset:process.env.CLOUDINARY_UPLOAD_PRESET
     })
  });
- router.post('/add-products', function(req,res){
+ router.post('/add-products', async function(req,res){
+
+   //get all the categories
+   
+   const allCategories = await Category.fetchAll().map(category =>[ category.get('id'),category.get('name')]);
+   
+   //get all the tags
+   const allTags = await Tag.fetchAll().map( tag => [tag.get('id'), tag.get('name')]);
+
+
    // create the product form object using caolan forms
-   const productForm = createProductForm();
+   const productForm = createProductForm(allCategories,allTags);
    //using the form object to handle the request
    productForm.handle(req,{
         'success': async function(form){
@@ -56,6 +65,7 @@ router.get('/', async function(req,res){
            product.set('description',form.data.description)
            product.set('location',form.data.location)
            product.set('category_id',form.data.category_id)
+           product.set('image_url',form.data.image_url);
 
            // save the prodcut to te databse
            await product.save();
@@ -126,7 +136,10 @@ router.get('/', async function(req,res){
 
    res.render('products/update',{
       'form': productForm.toHTML(bootstrapField),
-      'product':product.toJSON()
+      'product':product.toJSON(),
+      cloudinaryName: process.env.CLOUDINARY_NAME,
+      cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+      cloudinaryPreset:process.env.CLOUDINARY_UPLOAD_PRESET
    })
 
 

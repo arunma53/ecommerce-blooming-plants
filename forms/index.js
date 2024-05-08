@@ -66,6 +66,9 @@ const createProductForm = (categories,tags) => {
             widget:widgets.multipleSelect(),// use the checkbox
             choices: tags
 
+        }),
+        'image_url':fields.string({
+            widget:widgets.hidden()
         })
 
 

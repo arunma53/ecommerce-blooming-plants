@@ -7,6 +7,7 @@
         <a href="#" class="btn btn-primary mt-3" id="upload_widget">Upload Image</a>
         <img src="" style="display:none" id="uploaded_image" />
     </div>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}"/>
     <input type="submit" class="btn btn-primary mt-3" value="Add product" />
 </form>
 {{/block}}
@@ -41,7 +42,12 @@
     uploadPreset: '{{cloudinaryPreset}}',
     uploadSignature: generateSignature
     }, function(err,result){
-        console.log(result);
+       if(!err && result && result.event == "success"){
+        document.querySelector('#id_image_url').value = result.info.url;
+        const uploadedImage = document.querySelector('#uploaded_image');
+        uploadedImage.style.display="block";
+        uploadedImage.src = result.info.url;
+       }
     })
 
     document.querySelector('#upload_widget')
