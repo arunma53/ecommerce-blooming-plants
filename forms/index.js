@@ -130,8 +130,41 @@ const createLoginForm = () => {
             //cssClasses: {label: ['form-label']}
         })
     })
+    
+}
+const createSearchForm = function(categories,tags){
+  return forms.create({
+    'name':fields.string({
+        required: false,
+        errorAfterField:true
+    }),
+    'category_id':fields.string({
+        required:false,
+        errorAfterField:true,
+        widget:widgets.select(),
+        choices:categories
+    }),
+    'tags':fields.string({
+        required:false,
+        errorAfterField:true,
+        widget:widgets.multipleSelect(),
+        choices:tags
+    })
+    
+    // }),
+    // 'min_cost':fields.number({
+    //     required:false,
+    //     errorAfterField:true,
+    //     widget:widgets.number()
+    // }),
+    // 'max_cost':fields.number({
+    //     required:false,
+    //     errorAfterField:true,
+    //     widget:widgets.number()
+
+    // })
+  })
 }
 
-
 //exports
-module.exports = {createProductForm,createRegistrationForm,createLoginForm,bootstrapField};
+module.exports = {createProductForm,createRegistrationForm,createLoginForm,createSearchForm,bootstrapField};
