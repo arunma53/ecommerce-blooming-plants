@@ -4,6 +4,7 @@ const router = express.Router(); // #1 - Create a new express Router
 //require in the model
 const { Product, Category, Tag } = require('../models');
 const { createProductForm, bootstrapField, createSearchForm } = require('../forms');
+const dataLayer = require('../dal/products')
 const { object } = require("forms/lib/fields");
 const { route } = require("express/lib/application");
 
@@ -11,10 +12,10 @@ const { route } = require("express/lib/application");
 /// a router object can contain routes
 router.get('/', async function (req, res) {
 
-   const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
-   allCategories.unshift([0,'ALL']);
+   const allCategories = await dataLayer.getAllCategories();
+   allCategories.unshift([0,'All Category']);
    
-   const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+   const allTags = await dataLayer.getAllTags();
 
    const searchForm = createSearchForm(allCategories,allTags);
    searchForm.handle(req, {
@@ -45,7 +46,6 @@ router.get('/', async function (req, res) {
         queryBuilder.query('join','products_tags','products.id','products_id')
         .where('tag_id','in',form.data.tags.split(','));
        }
-
          //when we call fetch onn the queryBuilder,then the command
          //is sent to the SQL database
          const products = await queryBuilder.fetch({
@@ -61,11 +61,9 @@ router.get('/', async function (req, res) {
          // if the user submits an empty serach form, the just fetch 
          //all the products
 
-
          // use the product model to get all products
-         const products = await Product.collection().fetch({
-            withRelated: ['category', 'tags']
-         });
+         const products = await dataLayer.getAllProducts();
+
          //products.tojSON() convert the table rows  into JSON format
          res.render('products/index', {
             products: products.toJSON(),
@@ -98,7 +96,7 @@ router.get('/add-products', async function (req, res) {
    const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
 
    //get all the tags
-   const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+   const allTags = await Tag.fetchAll().map(t=> [t.get('id'), t.get('name')]);
 
 
    const productForm = createProductForm(allCategories, allTags);
@@ -116,7 +114,7 @@ router.post('/add-products', async function (req, res) {
    const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
 
    //get all the tags
-   const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+   const allTags = await Tag.fetchAll().map(t => [t.get('id'), t.get('name')]);
 
 
    // create the product form object using caolan forms
@@ -131,23 +129,7 @@ router.post('/add-products', async function (req, res) {
 
          //craete an instance of the Product model
          //an instance of the product is one row in 
-         const product = new Product();
-         product.set('name', form.data.name)
-         product.set('cost', form.data.cost)
-         product.set('description', form.data.description)
-         product.set('location', form.data.location)
-         product.set('category_id', form.data.category_id)
-         product.set('image_url', form.data.image_url);
-
-         // save the prodcut to te databse
-         await product.save();
-
-         //save the tags relationship
-         if (form.data.tags) {
-            //form.data.tags will be a string of the selected tag ids  separated BY COMMAas
-            //eg;"1,2"
-            await product.tags().attach(form.data.tags.split(','));
-         }
+         const product = await dataLayer.createProduct(form.data);
 
          // a flash message can only be send  before a redirect
          //req.flash has two arguments:
@@ -174,21 +156,15 @@ router.post('/add-products', async function (req, res) {
 })
 
 router.get('/update-product/:productId', async function (req, res) {
-   const productId = req.params.productId;
-
-   //fetch the product that we want to update
-   const product = await Product.where({
-      'id': productId
-   }).fetch({
-      require: true,
-      withRelated: ['tags'] //when fetching the products, also  getch the tag info
-   });
+   const productId = req.params.productId; 
+   const product = await dataLayer.getProductById(productId); 
+ 
    //get all the categories
 
-   const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
+   const allCategories = await dataLayer.getAllCategories();
 
    //get all the tags
-   const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+   const allTags = await dataLayer.getAllTags();
 
 
    //create the product form
@@ -238,8 +214,7 @@ router.post('/update-product/:productId', async function (req, res) {
          //product.set('description',form.data.description)
          //product.set('location',form.data.location)
          const { tags, ...productData } = form.data;
-         product.set(productData);
-         await product.save();
+         await dataLayer.updateProduct(product,productData);
 
          //update the relationships
          //1.coert the tags from  string to array
