@@ -98,7 +98,8 @@ async function main() {
     const productRoutes = require('./routes/products');
     const userRoutes = require('./routes/users');
     const cloudinaryRoutes = require('./routes/cloudinary');
-    const shoppingCartRoutes = require('./routes/shoppingCart')
+    const shoppingCartRoutes = require('./routes/shoppingCart');
+    const checkoutRoutes = require('./routes/checkout');
 
 
     // use the landing routes
@@ -107,6 +108,7 @@ async function main() {
     app.use('/users', userRoutes);
     app.use('/cloudinary',cloudinaryRoutes);
     app.use('/cart',shoppingCartRoutes);
+    app.use('/checkout',checkoutRoutes);
 
 
 
