@@ -13,6 +13,10 @@
         background-color: #f2f2f2;
         font-weight: bold;
     }
+    .product-image {
+        max-width: 80px; /* Adjust maximum width as needed */
+        max-height: 80px; /* Adjust maximum height as needed */
+    }
 </style>
 
 <h1>ALL PRODUCTS</h1>
@@ -62,12 +66,23 @@
             {{/each}}
         </td>
         <td>
+            <img src="{{this.image_url}}" alt="{{this.name}}" class="product-image">
+        </td>
+        <td>
             <a href = "/products/update-product/{{this.id}}"
             class="btn btn-primary btn-sm">Update</a>
             <a href = "/cart/{{this.id}}/add"
             class="btn btn-warning btn-sm">Add To Cart</a>
         </td>
     </tr>
+    <div class="card" style="width: 18rem;">
+  <img src="{{this.image_url}}" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">{{this.name}}</h5>
+    <p class="card-text">{{this.description}}</p>
+    <a href="/cart/{{this.id}}/add" class="btn btn-warning btn-sm">Add To Cart</a>
+  </div>
+</div>
     {{/each}}
 </table>
 {{/block}}

@@ -39,7 +39,8 @@ async function createProduct(productData) {
     product.set('name', productData.name)
     product.set('cost', productData.cost);
     product.set('description', productData.description);
-    product.set('category_id', productData.category_id)
+    product.set('location',productData.location);
+    product.set('category_id', productData.category_id);
     product.set('image_url', productData.image_url);
     // save the product to the database
     await product.save();

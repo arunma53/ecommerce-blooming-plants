@@ -29,5 +29,6 @@
     "stripe": "^15.6.0",
     "wax-on": "^1.2.2",
     "yarn": "^1.22.22"
-  }
+  },
+  "devDependencies": {}
 }

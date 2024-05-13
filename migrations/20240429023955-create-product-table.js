@@ -39,7 +39,7 @@ exports.up = function(db) {
     'notNull':true
   },
     location: {
-   ' type': 'string',
+   'type': 'string',
     'length': 100,
     'notNull': true
   }
