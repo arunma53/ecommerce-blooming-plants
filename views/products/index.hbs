@@ -1,21 +1,25 @@
 {{#extends "base"}}
 {{#block "content"}}
 <style>
-    h1{
+    h1 {
         color: #333;
-        font-size:26px;
-        margin-bottom:20px;
+        font-size: 26px;
+        margin-bottom: 20px;
         padding: 0;
         margin-top: 20px;
-        text-decoration:underline;
+        text-decoration: underline;
     }
+
     .table-header {
         background-color: #f2f2f2;
         font-weight: bold;
     }
+
     .product-image {
-        max-width: 80px; /* Adjust maximum width as needed */
-        max-height: 80px; /* Adjust maximum height as needed */
+        max-width: 80px;
+        /* Adjust maximum width as needed */
+        max-height: 80px;
+        /* Adjust maximum height as needed */
     }
 </style>
 
@@ -24,10 +28,11 @@
 <form method="GET" class="small-search-form">
     <i class="fa fa-search" aria-hidden="true"></i>
     {{{searchForm}}}
-    <input type="submit" class="btn btn-primary mt-3"/>
-    
+    <input type="hidden" name="_csrf" value="{{csrfToken}}"/>
+    <input type="submit" class="btn btn-primary mt-3" />
+
 </form>
-<table class="table">
+{{!-- <table class="table">
     <thead class="table-header">
         <th>Product ID</th>
         <th>Name</th>
@@ -56,35 +61,53 @@
             {{this.location}}
         </td>
         <td>
-           
+
             {{this.category.name}}
         </td>
         <td>
-             {{#each this.tags}}
-             <span class="badge rounded-pill bg-success">{{this.name}}</span>
-           
+            {{#each this.tags}}
+            <span class="badge rounded-pill bg-success">{{this.name}}</span>
+
             {{/each}}
         </td>
         <td>
             <img src="{{this.image_url}}" alt="{{this.name}}" class="product-image">
         </td>
         <td>
-            <a href = "/products/update-product/{{this.id}}"
-            class="btn btn-primary btn-sm">Update</a>
-            <a href = "/cart/{{this.id}}/add"
-            class="btn btn-warning btn-sm">Add To Cart</a>
+            <a href="/products/update-product/{{this.id}}" class="btn btn-primary btn-sm">Update</a>
+            <a href="/cart/{{this.id}}/add" class="btn btn-warning btn-sm">Add To Cart</a>
         </td>
-    </tr>
-    <div class="card" style="width: 18rem;">
-  <img src="{{this.image_url}}" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">{{this.name}}</h5>
-    <p class="card-text">{{this.description}}</p>
-    <a href="/cart/{{this.id}}/add" class="btn btn-warning btn-sm">Add To Cart</a>
-  </div>
+    </tr> --}}
+    
+     <div class="row">
+         {{#each products}}
+        <div class="col-md-2">
+           <div class="card mb-2" style="width: 13rem;">
+        <img src="{{this.image_url}}" class="card-img-top" style="width: 13rem; height:10rem" alt="image">
+        <div class="card-body" style="height:13rem">
+
+            <h5 class="card-title">{{this.name}}</h5>
+            {{!-- <p class="card-text">{{this.description}}</p> --}}
+            <p class="card-text">
+                <span class="text-muted me-2"><s>${{this.cost}}</s></span>
+                <span>{{this.cost}}</span>
+            </p>
+            {{#each this.tags}}
+            <span class="badge rounded-pill bg-success">{{this.name}}</span>
+
+            {{/each}}
+            <a href="/cart/{{this.id}}/add" class="btn btn-warning btn-sm mt-2">Add To Cart</a>
+            <a href="/products/delete-product/{{this.id}}" class="btn btn-danger btn-sm mt-2">Delete</a>
+        </div>
+     </div>
+        </div>  
+    
+{{/each}}
 </div>
-    {{/each}}
-</table>
+   {{!--
+   {{/each}}
+</table> 
+   --}} 
 {{/block}}
 
 {{/extends}}
