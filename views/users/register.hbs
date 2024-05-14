@@ -39,6 +39,7 @@
         }
     </style>
 {{/block}}
+
 {{#block 'content'}}
 <div class="container">
 <h1>Register</h1>
@@ -46,9 +47,11 @@
      <input type="hidden" name="_csrf" value="{{csrfToken}}"/>
     {{{userForm}}}
     <input type="submit" value="Register" class="btn btn-primary mt-3"/>
-    {{/block}}
+    
 </form>
 </div>
+
+{{/block}}
 {{/extends}}
 
  

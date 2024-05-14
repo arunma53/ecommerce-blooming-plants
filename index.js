@@ -10,7 +10,7 @@ const csurf = require('csurf');
 
 const app = express();
 
-const csurfInstance = csurf();
+
 
 // use hbs for the view engine
 app.set('view engine', 'hbs');
@@ -60,7 +60,19 @@ app.use(function (req, res, next) {
 
 //enable csurf for CSRF protection after sessions are enabled
 //because csurf requires sessions to work
-app.use(csurf());
+
+const csurfInstance = csurf();
+
+app.use(function(req,res,next){
+    // check if the request is  meant for the webhook
+    if (req.url === "/checkout/process_payment" || req.url.slice(0, 5) == '/api/') {
+        // exclude from CSRF protection
+        return next();
+    } 
+    csurfInstance(req,res,next);
+})
+
+//app.use(csurf());
 // app.use(function(req,res,next){
 // // if statment to bypass csurf
 //     if(req.url.slice(0,5) === "/api/")
@@ -73,7 +85,10 @@ app.use(csurf());
 //middleware to share the csurf token with all hbs files
 app.use(function (req, res, next) {
     //req.csrfToken(); is available because of `app.use(csrf)`
-    res.locals.csrfToken = req.csrfToken();
+    if(req.csrfToken){
+        res.locals.csrfToken = req.csrfToken();
+    }
+    
     next();
 })
 
@@ -100,6 +115,9 @@ async function main() {
     const cloudinaryRoutes = require('./routes/cloudinary');
     const shoppingCartRoutes = require('./routes/shoppingCart');
     const checkoutRoutes = require('./routes/checkout');
+    const api= {
+        products: require('./routes/api/products')
+    }
 
 
     // use the landing routes
@@ -110,8 +128,11 @@ async function main() {
     app.use('/cart',shoppingCartRoutes);
     app.use('/checkout',checkoutRoutes);
 
-
-
+    //for RESTFul API endpoints
+    app.use('/api/products',  express.json(), api.products);
+    app.get("/api/", (req,res)=> {
+        res.status(200).json({"message": "Success"})
+    })
 }
 
 main();

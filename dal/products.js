@@ -1,6 +1,10 @@
 
 const { Product, Category ,Tag} = require('../models');
 
+async function getAllProducts(){
+    return await Product.fetchAll();
+}
+
 async function getProductById(productId) {
     const product = await Product.where({
         'id': productId
@@ -66,5 +70,6 @@ module.exports = {
     getAllTags, 
     createProduct, 
     updateProduct,
-    getProductById
+    getProductById,
+    getAllProducts
 }
