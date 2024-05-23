@@ -11,7 +11,7 @@ const { route } = require("express/lib/application");
 
 /// a router object can contain routes
 router.get('/', async function (req, res) {
-
+   console.log("Test")
    const allCategories = await dataLayer.getAllCategories();
    allCategories.unshift([0,'All Category']);
    
