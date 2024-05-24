@@ -18,9 +18,10 @@ async function addToCart(userId, productId, quantity) {
 async function getCart(userId) {
     const cartItems = await cartDataLayer.getCart(userId);
 
-    // example of busienss logic: write the logic to get recommendation based on the content of the shopping cart
+    // // example of busienss logic: write the logic to get recommendation based on the content of the shopping cart
 
-    return cartItems;
+     return cartItems;
+    //return await cartItems.where({ user_id: userId }).fetchAll({ withRelated: ['product'] });
 }
 
 async function removeFromCart(userId, productId) {

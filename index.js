@@ -7,10 +7,12 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const FileStore = require('session-file-store')(session);
 const csurf = require('csurf');
+const cors = require('cors')
+const { CartItem } = require('./models');
 
 const app = express();
 
-
+app.use(cors())
 
 // use hbs for the view engine
 app.set('view engine', 'hbs');
@@ -116,7 +118,9 @@ async function main() {
     const shoppingCartRoutes = require('./routes/shoppingCart');
     const checkoutRoutes = require('./routes/checkout');
     const api= {
-        products: require('./routes/api/products')
+        products: require('./routes/api/products'),
+        cart: require('./routes/api/cart')
+        
     }
 
 
@@ -130,6 +134,7 @@ async function main() {
 
     //for RESTFul API endpoints
     app.use('/api/products',  express.json(), api.products);
+    app.use('/api/cart', express.json(), api.cart);
     app.get("/api/", (req,res)=> {
         res.status(200).json({"message": "Success"})
     })
